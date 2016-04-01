@@ -6,13 +6,7 @@ import bolt.FileWriterBolt;
 import spout.TwitterSpout;
 import twitter4j.FilterQuery;
 
-/**
- * Created with IntelliJ IDEA.
- * User: joning
- * Date: 06.09.13
- * Time: 20:49
- * To change this template use File | Settings | File Templates.
- */
+
 public class TwitterTopologia {
 
     private static String consumerKey = "FILL IN HERE";
