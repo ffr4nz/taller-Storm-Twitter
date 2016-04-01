@@ -92,7 +92,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>storm.starter.TwitterTopologia</mainClass>
+                            <mainClass>TwitterTopologia</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
