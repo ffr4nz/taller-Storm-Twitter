@@ -37,7 +37,7 @@ public class TwitterTopologia {
 
         FilterQuery tweetFilterQuery = new FilterQuery();
         // TODO: Define your own twitter query
-        // tweetFilterQuery.track(new String[]{"Music"});
+         tweetFilterQuery.track(new String[]{"madrid"});
         // See https://github.com/kantega/storm-twitter-workshop/wiki/Basic-Twitter-stream-reading-using-Twitter4j
 
 
@@ -47,15 +47,16 @@ public class TwitterTopologia {
         FileWriterBolt fileWriterBolt = new FileWriterBolt("MyTweets.txt");
         //TODO: Route messages from the spout to the file writer bolt. Hint: Again, use the builder object.
 
+        builder.setSpout("spoutLeerTwitter",spout,1);
+        builder.setBolt("escribirFichero",fileWriterBolt,1).shuffleGrouping("spoutLeerTwitter");
 
         Config conf = new Config();
-        conf.setDebug(false);
+        conf.setDebug(true);
 
-
-        if (remoteClusterTopologyName!=null) {
+        if (args != null && args.length > 0) {
             conf.setNumWorkers(3);
 
-            StormSubmitter.submitTopology(remoteClusterTopologyName, conf, builder.createTopology());
+            StormSubmitter.submitTopology(args[0], conf, builder.createTopology());
         }
         else {
             conf.setMaxTaskParallelism(3);
