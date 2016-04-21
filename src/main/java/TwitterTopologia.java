@@ -20,6 +20,7 @@ public class TwitterTopologia {
 
 
 
+
     public static void main(String[] args) throws Exception {
         /**************** SETUP ****************/
         String remoteClusterTopologyName = null;
@@ -49,7 +50,7 @@ public class TwitterTopologia {
         TwitterSpout spout = new TwitterSpout(consumerKey, consumerSecret, accessToken, accessTokenSecret, tweetFilterQuery);
         //TODO: Set the twitter spout as spout on this topology. Hint: Use the builder object.
 
-        FileWriterBolt fileWriterBolt = new FileWriterBolt("ranking.txt");
+        FileWriterBolt fileWriterBolt = new FileWriterBolt("sentimiento.txt");
         //TODO: Route messages from the spout to the file writer bolt. Hint: Again, use the builder object.
 
         LanguageDetectionBolt lenguaje= new LanguageDetectionBolt();
@@ -57,14 +58,16 @@ public class TwitterTopologia {
         RollingCountBolt contador = new RollingCountBolt(9, 3);
         IntermediateRankingsBolt ranking = new IntermediateRankingsBolt(100);
         TotalRankingsBolt rankingTotal = new TotalRankingsBolt(100);
+        SentimentBolt sentimiento = new SentimentBolt();
 
         builder.setSpout("spoutLeerTwitter",spout,1);
         builder.setBolt("lenguaje",lenguaje,1).shuffleGrouping("spoutLeerTwitter");
-        builder.setBolt("hashtag",hashtag,1).shuffleGrouping("lenguaje");
-        builder.setBolt("cont",contador,1).fieldsGrouping("hashtag", new Fields("entity"));
-        builder.setBolt("ranking",ranking,1).fieldsGrouping("cont", new Fields("obj"));
-        builder.setBolt("rankingTot",rankingTotal,1).globalGrouping("ranking");
-        builder.setBolt("escribirFichero",fileWriterBolt,1).shuffleGrouping("rankingTot");
+        builder.setBolt("sentimiento", sentimiento,1).shuffleGrouping("lenguaje");
+//        builder.setBolt("hashtag",hashtag,1).shuffleGrouping("lenguaje");
+//        builder.setBolt("cont",contador,1).fieldsGrouping("hashtag", new Fields("entity"));
+//        builder.setBolt("ranking",ranking,1).fieldsGrouping("cont", new Fields("obj"));
+//        builder.setBolt("rankingTot",rankingTotal,1).globalGrouping("ranking");
+        builder.setBolt("escribirFichero",fileWriterBolt,1).shuffleGrouping("sentimiento");
 
 
         Config conf = new Config();

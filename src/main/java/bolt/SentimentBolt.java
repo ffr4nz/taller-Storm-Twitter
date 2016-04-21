@@ -4,7 +4,9 @@ import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
+import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
+import backtype.storm.tuple.Values;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -31,13 +33,14 @@ public class SentimentBolt extends BaseRichBolt {
     @Override
     public void execute(Tuple tuple) {
         //TODO make use of the language information. If the language is spanish ("es"), we calculate the sentiment value
-        String language = "?";
-        String text = "?";
+        String text = tuple.getStringByField("message");
+        String language = tuple.getStringByField("language");
 
-        if (StringUtils.equals(language, "no")) {
+        if (StringUtils.equals(language, "es")) {
             double sentimentValue = calculateSentimentValue(text);
 
             //TODO Emit both the text and its sentimentValue
+            _collector.emit(new Values(text, sentimentValue));
         }
         // Confirm that this tuple has been treated.
         _collector.ack(tuple);
@@ -73,6 +76,8 @@ public class SentimentBolt extends BaseRichBolt {
     @Override
     public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
         //TODO Declare your output fields
+        outputFieldsDeclarer.declare(new Fields("message", "sentiment-value"));
+
     }
 
     @Override
