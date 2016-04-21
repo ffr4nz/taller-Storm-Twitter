@@ -11,14 +11,11 @@ import twitter4j.FilterQuery;
 
 public class TwitterTopologia {
 
-//    private static String consumerKey = "FILL IN HERE";
-//    private static String consumerSecret = "FILL IN HERE";
-//    private static String accessToken = "FILL IN HERE";
-//    private static String accessTokenSecret = "FILL IN HERE";
-    private static String consumerKey = "rR7yrSFfb05Dj7sfF6J57dz0G";
-    private static String consumerSecret = "8IYdN3VuzqtBQx9VF67MAUzlFLboOlteILYXocuH3Z3NRlxPZB";
-    private static String accessToken = "176882080-xl7GJfkdGPO74iIHGVut9Hk8Z6ScxlLZy7pdHOBQ";
-    private static String accessTokenSecret = "7uJSrDS2OIDTBWnGZwz0p4J6RAdT6FmbhTJztjFAtL35k";
+    private static String consumerKey = "FILL IN HERE";
+    private static String consumerSecret = "FILL IN HERE";
+    private static String accessToken = "FILL IN HERE";
+    private static String accessTokenSecret = "FILL IN HERE";
+
 
 
 
