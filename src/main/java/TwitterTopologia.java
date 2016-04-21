@@ -6,6 +6,10 @@ import bolt.FileWriterBolt;
 import spout.TwitterSpout;
 import twitter4j.FilterQuery;
 
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
 
 public class TwitterTopologia {
 
@@ -15,7 +19,12 @@ public class TwitterTopologia {
     private static String accessTokenSecret = "FILL IN HERE";
 
 
+
+
     public static void main(String[] args) throws Exception {
+
+        LogManager.getLogManager().getLogger(Logger.GLOBAL_LOGGER_NAME).setLevel(Level.INFO);
+
         /**************** SETUP ****************/
         String remoteClusterTopologyName = null;
         if (args!=null) {
@@ -37,28 +46,29 @@ public class TwitterTopologia {
 
         FilterQuery tweetFilterQuery = new FilterQuery();
         // TODO: Define your own twitter query
-        // tweetFilterQuery.track(new String[]{"Music"});
+        tweetFilterQuery.track(new String[]{"madrid"});
         // See https://github.com/kantega/storm-twitter-workshop/wiki/Basic-Twitter-stream-reading-using-Twitter4j
 
 
         TwitterSpout spout = new TwitterSpout(consumerKey, consumerSecret, accessToken, accessTokenSecret, tweetFilterQuery);
         //TODO: Set the twitter spout as spout on this topology. Hint: Use the builder object.
 
-        FileWriterBolt fileWriterBolt = new FileWriterBolt("MyTweets.txt");
+        FileWriterBolt fileWriterBolt = new FileWriterBolt("misTweets.txt");
         //TODO: Route messages from the spout to the file writer bolt. Hint: Again, use the builder object.
 
+        builder.setSpout("spout", spout,1);
+        builder.setBolt("bolt",fileWriterBolt,1).shuffleGrouping("spout");
 
         Config conf = new Config();
-        conf.setDebug(false);
+        conf.setDebug(true);
 
 
-        if (remoteClusterTopologyName!=null) {
+        if (args != null && args.length > 0) {
             conf.setNumWorkers(3);
 
-            StormSubmitter.submitTopology(remoteClusterTopologyName, conf, builder.createTopology());
+            StormSubmitter.submitTopology(args[0], conf, builder.createTopology());
         }
         else {
-            conf.setMaxTaskParallelism(3);
 
             LocalCluster cluster = new LocalCluster();
             cluster.submitTopology("twitter-fun", conf, builder.createTopology());
