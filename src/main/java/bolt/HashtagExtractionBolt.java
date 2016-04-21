@@ -6,6 +6,7 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
+import backtype.storm.tuple.Values;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Map;
@@ -40,6 +41,7 @@ public class HashtagExtractionBolt extends BaseRichBolt {
             if (StringUtils.startsWith(term, "#")){
                 String hashtag = term;
                 //TODO emit hashtag
+                _collector.emit(new Values(hashtag));
             }
 
         }

@@ -3,6 +3,8 @@ import backtype.storm.LocalCluster;
 import backtype.storm.StormSubmitter;
 import backtype.storm.topology.TopologyBuilder;
 import bolt.FileWriterBolt;
+import bolt.HashtagExtractionBolt;
+import bolt.LanguageDetectionBolt;
 import spout.TwitterSpout;
 import twitter4j.FilterQuery;
 
@@ -13,6 +15,7 @@ public class TwitterTopologia {
     private static String consumerSecret = "FILL IN HERE";
     private static String accessToken = "FILL IN HERE";
     private static String accessTokenSecret = "FILL IN HERE";
+
 
 
     public static void main(String[] args) throws Exception {
@@ -44,11 +47,16 @@ public class TwitterTopologia {
         TwitterSpout spout = new TwitterSpout(consumerKey, consumerSecret, accessToken, accessTokenSecret, tweetFilterQuery);
         //TODO: Set the twitter spout as spout on this topology. Hint: Use the builder object.
 
-        FileWriterBolt fileWriterBolt = new FileWriterBolt("MyTweets.txt");
+        FileWriterBolt fileWriterBolt = new FileWriterBolt("hashtag.txt");
         //TODO: Route messages from the spout to the file writer bolt. Hint: Again, use the builder object.
 
+        LanguageDetectionBolt lenguaje= new LanguageDetectionBolt();
+        HashtagExtractionBolt hashtag = new HashtagExtractionBolt();
+
         builder.setSpout("spoutLeerTwitter",spout,1);
-        builder.setBolt("escribirFichero",fileWriterBolt,1).shuffleGrouping("spoutLeerTwitter");
+        builder.setBolt("lenguaje",lenguaje,1).shuffleGrouping("spoutLeerTwitter");
+        builder.setBolt("hashtag",hashtag,1).shuffleGrouping("lenguaje");
+        builder.setBolt("escribirFichero",fileWriterBolt,1).shuffleGrouping("hashtag");
 
         Config conf = new Config();
         conf.setDebug(true);

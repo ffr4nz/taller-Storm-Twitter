@@ -6,6 +6,7 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
+import backtype.storm.tuple.Values;
 import org.apache.tika.language.*;
 
 import java.util.Map;
@@ -34,8 +35,9 @@ public class LanguageDetectionBolt extends BaseRichBolt {
         String language = detectLanguage(text);
         //TODO Emit both the incoming text and the detected language
 
+        _collector.emit(new Values(text, language));
         //TODO Confirm that this tuple has been treated.
-
+        _collector.ack(tuple);
     }
 
     private String detectLanguage(String text) {
